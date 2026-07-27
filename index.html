@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Immobilisations — SFG FR14</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{
+  --green:#237A45;
+  --green-dark:#0F2A19;
+  --ink:#1A1D1B;
+  --paper:#FAFAF9;
+  --line:#DDDFDC;
+  --line-strong:#C4C8C4;
+  --gray:#6B6F6C;
+  --white:#FFFFFF;
+  --red:#8B1E1E;
+  --red-bg:#FCEAEA;
+  --red-line:#E2A0A0;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+a{color:var(--green);text-decoration:none;}
+a:hover{text-decoration:underline;}
+button{font:inherit;cursor:pointer;}
+.mono{font-family:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",Menlo,monospace;}
+
+header{background:var(--green-dark);border-bottom:1px solid #08170D;}
+.header-inner{
+  max-width:1180px;margin:0 auto;padding:0 20px;
+  display:flex;align-items:center;justify-content:space-between;height:56px;flex-wrap:wrap;
+}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand-logo{height:26px;display:block;}
+.brand-fallback{
+  width:26px;height:26px;background:var(--green);color:#fff;border-radius:3px;
+  display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;letter-spacing:.02em;
+}
+.header-title{color:#fff;font-size:15px;font-weight:600;}
+.header-title span{color:#8FBE9E;font-weight:400;margin-left:8px;font-size:12.5px;}
+nav{display:flex;gap:2px;flex-wrap:wrap;}
+nav a{
+  color:#CFE3D5;font-size:12.5px;padding:8px 10px;border-bottom:2px solid transparent;white-space:nowrap;
+}
+nav a:hover{color:#fff;text-decoration:none;}
+nav a.active{color:#fff;border-bottom-color:var(--green);}
+
+.subbar{background:var(--white);border-bottom:1px solid var(--line);}
+.subbar-inner{max-width:1180px;margin:0 auto;padding:8px 20px;font-size:12.5px;color:var(--gray);}
+.subbar a{color:var(--green);}
+
+main{max-width:1180px;margin:0 auto;padding:24px 20px 80px;min-height:60vh;}
+
+h1{font-size:19px;font-weight:600;margin:0 0 4px;}
+h2{font-size:15px;font-weight:600;margin:0;}
+.page-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+.page-sub{color:var(--gray);font-size:12.5px;}
+
+.search-row{display:flex;gap:8px;margin-bottom:6px;}
+.search-row input{
+  flex:1;border:1px solid var(--line-strong);border-radius:3px;padding:9px 11px;font-size:14px;
+  background:#fff;color:var(--ink);
+}
+.search-row input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 2px rgba(35,122,69,.15);}
+.search-row button{
+  background:var(--green);color:#fff;border:1px solid var(--green);border-radius:3px;padding:0 18px;font-size:13.5px;font-weight:600;
+}
+.search-row button:hover{background:#1c6538;}
+.search-help{font-size:12px;color:var(--gray);margin-bottom:22px;}
+
+.table-wrap{border:1px solid var(--line);border-radius:3px;overflow:hidden;background:#fff;}
+table{width:100%;border-collapse:collapse;}
+thead th{
+  text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.02em;color:var(--gray);
+  padding:9px 12px;background:#F2F3F1;border-bottom:1px solid var(--line);font-weight:600;
+}
+tbody td{padding:9px 12px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:top;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr.clickable{cursor:pointer;}
+tbody tr.clickable:hover{background:#F3F8F4;}
+td.num{color:var(--green);font-weight:600;}
+td.right{text-align:right;white-space:nowrap;}
+.dim{color:var(--gray);}
+tfoot td{padding:9px 12px;font-weight:600;background:#F2F3F1;border-top:2px solid var(--line-strong);}
+
+.result-note{padding:14px;font-size:12.5px;color:var(--gray);background:#F7F8F6;border-top:1px solid var(--line);}
+.empty-box{border:1px solid var(--line);border-radius:3px;padding:36px;text-align:center;color:var(--gray);background:#fff;}
+.empty-box b{display:block;color:var(--ink);font-size:14px;margin-bottom:6px;font-weight:600;}
+.info-note{font-size:12.5px;color:var(--gray);background:#F7F8F6;border:1px solid var(--line);border-radius:3px;padding:12px 14px;margin-bottom:18px;}
+
+/* -------- blueprint plan -------- */
+.blueprint{
+  background:#EEF1F4 repeating-linear-gradient(0deg,transparent,transparent 27px,#E2E7EA 28px),
+             repeating-linear-gradient(90deg,transparent,transparent 27px,#E2E7EA 28px);
+  border:1px solid #C7CDD3;border-radius:3px;padding:18px;
+}
+.blueprint-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;grid-auto-rows:64px;grid-auto-flow:dense;}
+.blueprint-grid.compact{grid-template-columns:repeat(6,1fr);grid-auto-rows:40px;gap:6px;}
+.bp-zone{
+  grid-column:span 1;background:#fff;border:1.5px solid #93A4B1;border-radius:2px;
+  padding:7px 9px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;
+}
+a.bp-zone:hover{border-color:var(--green);text-decoration:none;}
+.bp-zone.lg{grid-column:span 2;grid-row:span 2;}
+.bp-zone.md{grid-column:span 2;}
+.bp-zone .zn{font-size:12px;font-weight:600;color:var(--ink);line-height:1.2;}
+.bp-zone .zc{font-size:10.5px;color:var(--gray);}
+.bp-zone.highlight{background:#E7F5EC;border-color:var(--green);border-width:2px;}
+.bp-zone.highlight .zn{color:var(--green-dark);}
+.bp-zone.here::after{
+  content:"vous êtes ici";position:absolute;top:5px;right:7px;font-size:9px;color:var(--green);font-weight:700;text-transform:uppercase;
+}
+.compact .bp-zone .zn{font-size:10.5px;}
+.compact .bp-zone .zc{display:none;}
+
+.zone-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:14px;}
+.zone-chip{
+  display:block;background:#fff;border:1px solid var(--line);border-radius:3px;padding:11px 13px;
+}
+.zone-chip:hover{border-color:var(--green);text-decoration:none;}
+.zone-chip .zn{font-size:13px;font-weight:600;color:var(--ink);}
+.zone-chip .zc{font-size:11.5px;color:var(--gray);margin-top:2px;}
+
+.breadcrumb{font-size:12.5px;color:var(--gray);margin-bottom:14px;}
+.breadcrumb a{color:var(--green);}
+
+/* -------- fiche -------- */
+.fiche-top{
+  display:flex;gap:24px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:3px;
+  padding:20px 22px;margin-bottom:14px;flex-wrap:wrap;
+}
+.qr-box{border:1px solid var(--line);padding:8px;border-radius:3px;flex:0 0 auto;background:#fff;}
+.fiche-top-info .num{font-family:ui-monospace,monospace;color:var(--green);font-size:13px;margin-bottom:4px;}
+.fiche-top-info h1{font-size:20px;max-width:560px;}
+.status-line{font-size:12px;color:var(--gray);margin-top:8px;}
+
+.scrap-box{
+  background:var(--red-bg);border:1px solid var(--red-line);color:var(--red);border-radius:3px;
+  padding:12px 16px;margin-bottom:14px;font-weight:600;font-size:13.5px;display:flex;align-items:center;gap:8px;
+}
+.scrap-box .y{font-weight:700;}
+
+dl.info{
+  display:grid;grid-template-columns:220px 1fr;border:1px solid var(--line);border-radius:3px;background:#fff;
+  margin:0 0 18px;
+}
+dl.info div.row{display:contents;}
+dl.info dt{
+  padding:10px 14px;border-bottom:1px solid var(--line);background:#F7F8F6;font-size:12.5px;color:var(--gray);
+}
+dl.info dd{
+  margin:0;padding:10px 14px;border-bottom:1px solid var(--line);font-size:13.5px;
+}
+dl.info div.row:last-child dt,dl.info div.row:last-child dd{border-bottom:none;}
+dd.highlight{font-weight:600;color:var(--green);}
+
+.mini-plan-title{font-size:13px;font-weight:600;margin:0 0 8px;}
+.fiche-actions{margin-top:8px;display:flex;gap:10px;align-items:center;}
+.link-btn{
+  background:#fff;border:1px solid var(--line-strong);border-radius:3px;padding:7px 12px;font-size:12.5px;color:var(--ink);
+}
+.link-btn:hover{border-color:var(--green);}
+.link-btn.danger{color:var(--red);border-color:var(--red-line);}
+
+/* -------- bilan -------- */
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-bottom:22px;}
+.stat-box{background:#fff;border:1px solid var(--line);border-radius:3px;padding:16px 18px;}
+.stat-box .sv{font-size:22px;font-weight:700;color:var(--green-dark);}
+.stat-box .sl{font-size:12px;color:var(--gray);margin-top:2px;}
+
+/* -------- form -------- */
+.form-card{background:#fff;border:1px solid var(--line);border-radius:3px;padding:22px;max-width:680px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field.full{grid-column:1/-1;}
+.field label{font-size:12px;color:var(--gray);}
+.field input,.field select{
+  border:1px solid var(--line-strong);border-radius:3px;padding:8px 10px;font-size:13.5px;background:#fff;
+}
+.field input:focus,.field select:focus{outline:none;border-color:var(--green);}
+.submit-row{margin-top:18px;display:flex;align-items:center;gap:12px;}
+.btn-primary{background:var(--green);color:#fff;border:1px solid var(--green);border-radius:3px;padding:9px 18px;font-size:13.5px;font-weight:600;}
+.btn-primary:hover{background:#1c6538;}
+.form-note{font-size:11.5px;color:var(--gray);}
+
+.toast{
+  position:fixed;bottom:20px;right:20px;background:var(--ink);color:#fff;padding:11px 16px;border-radius:3px;
+  font-size:13px;border-left:3px solid var(--green);opacity:0;transform:translateY(6px);
+  transition:opacity .2s ease,transform .2s ease;pointer-events:none;z-index:50;
+}
+.toast.show{opacity:1;transform:translateY(0);}
+
+footer{border-top:1px solid var(--line);padding:16px 20px;font-size:11.5px;color:var(--gray);text-align:center;}
+
+@media(max-width:720px){
+  .header-inner{flex-direction:column;height:auto;padding:12px 20px;gap:10px;align-items:flex-start;}
+  dl.info{grid-template-columns:1fr;}
+  dl.info dt{border-bottom:none;padding-bottom:2px;}
+  .form-grid{grid-template-columns:1fr;}
+  table{font-size:12px;}
+  thead th:nth-child(3),tbody td:nth-child(3){display:none;}
+  .blueprint-grid{grid-template-columns:repeat(3,1fr);}
+  .bp-zone.lg,.bp-zone.md{grid-column:span 1;grid-row:span 1;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <img class="brand-logo" src="assets/schneider-logo.svg" alt="Schneider Electric"
+           onerror="this.remove(); var f=document.getElementById('brand-fallback'); if(f) f.style.display='inline-flex';">
+      <span id="brand-fallback" class="brand-fallback" style="display:none">SE</span>
+      <div class="header-title">Immobilisations SFG <span>FR14 · Société Française Gardy</span></div>
+    </div>
+    <nav>
+      <a href="#/" data-route="home">Recherche</a>
+      <a href="#/plan" data-route="plan">Plan de l'usine</a>
+      <a href="#/bilan" data-route="bilan">Bilan</a>
+      <a href="#/amorties" data-route="amorties">Amorties</a>
+      <a href="#/rebut" data-route="rebut">Rebut</a>
+      <a href="#/ajouter" data-route="ajouter">Ajouter</a>
+    </nav>
+  </div>
+</header>
+<div class="subbar"><div class="subbar-inner" id="subbar-text">Chargement des données…</div></div>
+
+<main id="app"></main>
+
+<footer>Registre interne des immobilisations — données extraites du fichier FA_Inventory. Site de démonstration, à connecter à une source de données à jour.</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let ASSETS = [];
+let DATA_READY = false;
+
+const ZONE_ALIASES = { "méca":"Méca", "meca":"Méca", "rémini":"Remini", "remini":"Remini" };
+function canonZone(sec){
+  if(!sec) return "Non renseigné";
+  const key = sec.trim();
+  const low = key.toLowerCase();
+  return ZONE_ALIASES[low] || key;
+}
+
+// sous-zones : on ne garde que les emplacements reconnaissables dans le texte libre
+// (Hall 1 à 4, magasin, galerie, labo...) -- le reste n'est pas assez propre pour être affiché
+const LOC_PATTERNS = [
+  [/HALL\s*4\s*BIS/i, "Hall 4 bis"],
+  [/HALL\s*1/i, "Hall 1"],
+  [/HALL\s*2/i, "Hall 2"],
+  [/HALL\s*3/i, "Hall 3"],
+  [/HALL\s*4/i, "Hall 4"],
+  [/MAGASIN/i, "Magasin"],
+  [/GAL(L)?ERIE/i, "Galerie"],
+  [/SALLE\s*PAUSE/i, "Salle de pause"],
+  [/LABO.*IQE|IQE.*LABO/i, "Labo IQE"],
+  [/LABO.*TECHNIQUE/i, "Labo technique"],
+  [/^IQE$/i, "IQE"]
+];
+function normalizeLoc(raw){
+  if(!raw) return null;
+  for(const [re,label] of LOC_PATTERNS){ if(re.test(raw)) return label; }
+  return null;
+}
+
+function loadCustomAssets(){
+  try{ return JSON.parse(localStorage.getItem("sfg_custom_assets")||"[]"); }catch(e){ return []; }
+}
+function saveCustomAsset(a){
+  const list = loadCustomAssets(); list.push(a);
+  localStorage.setItem("sfg_custom_assets", JSON.stringify(list));
+}
+function scrapOverrides(){
+  try{ return JSON.parse(localStorage.getItem("sfg_scrap_overrides")||"{}"); }catch(e){ return {}; }
+}
+function setScrapOverride(numero, year){
+  const o = scrapOverrides(); o[numero] = { year: Number(year), manual:true };
+  localStorage.setItem("sfg_scrap_overrides", JSON.stringify(o));
+}
+function clearScrapOverride(numero){
+  const o = scrapOverrides(); delete o[numero];
+  localStorage.setItem("sfg_scrap_overrides", JSON.stringify(o));
+}
+function getScrapInfo(a){
+  const o = scrapOverrides();
+  if(o[a.numero]) return o[a.numero];
+  return a.scrap || null;
+}
+
+function allAssets(){ return ASSETS.concat(loadCustomAssets()); }
+
+fetch('./data/assets.json')
+  .then(r=>r.json())
+  .then(json=>{
+    ASSETS = json.map(a=>({
+      numero:a.n, legacy:a.leg, oi:a.oi, description:a.d, costCenter:a.cc, costCenterName:a.ccn,
+      zone:canonZone(a.sec), categorie:a.cat, date:a.acq, duree:a.dur, valeurInit:a.vi, bookVal:a.bv,
+      responsable:a.resp, statut:a.st, localisation:a.loc, scrap:a.scrap||null, computed:false
+    }));
+    DATA_READY = true;
+    document.getElementById('subbar-text').textContent = ASSETS.length.toLocaleString('fr-FR')+" immobilisations chargées — dernier import du fichier Excel FA_Inventory.";
+    route();
+  })
+  .catch(err=>{
+    document.getElementById('subbar-text').textContent = "Impossible de charger data/assets.json (le fichier doit être servi via un serveur web, pas ouvert directement).";
+    console.error(err);
+  });
+
+function normalize(s){
+  return (s||'').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+}
+function fmtEUR(n){
+  if(n===null || n===undefined || isNaN(n)) return "—";
+  return Math.round(n).toLocaleString('fr-FR')+" €";
+}
+function fmtDate(d){
+  if(!d) return "—";
+  const dt=new Date(d);
+  if(isNaN(dt)) return d;
+  return dt.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'});
+}
+function computedValue(a){
+  if(!a.computed) return a.bookVal;
+  const debut = new Date(a.date);
+  const now = new Date();
+  const moisEcoules = Math.max(0,(now.getFullYear()-debut.getFullYear())*12 + (now.getMonth()-debut.getMonth()));
+  const dureeMois = (a.duree||1)*12;
+  const pct = Math.min(1, moisEcoules/dureeMois);
+  return Math.max(0, Math.round(a.valeurInit*(1-pct)));
+}
+
+function searchAssets(query){
+  const tokens = normalize(query).split(/\s+/).filter(Boolean);
+  if(!tokens.length) return [];
+  return allAssets().filter(a=>{
+    const hay = normalize(a.numero+' '+a.description+' '+a.zone+' '+(a.responsable||''));
+    return tokens.every(t=>hay.includes(t));
+  });
+}
+
+const app = document.getElementById("app");
+
+function route(){
+  if(!DATA_READY){ app.innerHTML = `<div class="empty-box">Chargement des immobilisations…</div>`; return; }
+  const hash = location.hash.replace(/^#\/?/,'');
+  const parts = hash.split('/').filter(Boolean);
+  document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active'));
+
+  if(parts.length===0){ setActive('home'); return renderHome(); }
+  if(parts[0]==='recherche'){ setActive('home'); return renderHome(decodeURIComponent(parts[1]||'')); }
+  if(parts[0]==='plan' && parts.length===1){ setActive('plan'); return renderPlan(); }
+  if(parts[0]==='plan' && parts.length===2){ setActive('plan'); return renderPlanZone(decodeURIComponent(parts[1])); }
+  if(parts[0]==='plan' && parts.length>=3){ setActive('plan'); return renderPlanZone(decodeURIComponent(parts[1]), decodeURIComponent(parts[2])); }
+  if(parts[0]==='bilan'){ setActive('bilan'); return renderBilan(); }
+  if(parts[0]==='amorties'){ setActive('amorties'); return renderAmorties(); }
+  if(parts[0]==='rebut'){ setActive('rebut'); return renderRebut(); }
+  if(parts[0]==='asset'){ return renderFiche(decodeURIComponent(parts[1])); }
+  if(parts[0]==='ajouter'){ setActive('ajouter'); return renderForm(); }
+  return renderHome();
+}
+function setActive(name){
+  const el = document.querySelector('nav a[data-route="'+name+'"]');
+  if(el) el.classList.add('active');
+}
+window.addEventListener('hashchange', route);
+window.addEventListener('DOMContentLoaded', route);
+function toast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2400);
+}
+
+function resultRow(a){
+  return `<tr class="clickable" onclick="location.hash='#/asset/${encodeURIComponent(a.numero)}'">
+    <td class="num mono">${a.numero}</td>
+    <td>${a.description}</td>
+    <td class="dim">${a.zone}</td>
+    <td class="dim">${a.responsable||'—'}</td>
+    <td class="right mono">${fmtEUR(computedValue(a))}</td>
+  </tr>`;
+}
+function resultsTable(list, extraFootNote){
+  return `<div class="table-wrap">
+    <table>
+      <thead><tr><th>Numéro</th><th>Description</th><th>Zone</th><th>Responsable</th><th style="text-align:right">Valeur nette</th></tr></thead>
+      <tbody>${list.map(resultRow).join('')}</tbody>
+    </table>
+    ${extraFootNote ? `<div class="result-note">${extraFootNote}</div>` : ''}
+  </div>`;
+}
+
+/* =========================================================
+   RECHERCHE
+   ========================================================= */
+function renderHome(query){
+  query = query || "";
+  let results = [];
+  let showingDefault = false;
+  if(query.trim()){
+    results = searchAssets(query);
+  } else {
+    showingDefault = true;
+    results = allAssets().slice(0,50);
+  }
+  const capped = results.slice(0,150);
+
+  app.innerHTML = `
+    <div class="page-head">
+      <div>
+        <h1>Rechercher une immobilisation</h1>
+        <div class="page-sub">Par numéro, par mot présent dans la description, ou par zone</div>
+      </div>
+    </div>
+    <div class="search-row">
+      <input id="search-input" type="text" placeholder="ex. 200000001452, ou « presse remini », ou juste un bout du numéro" value="${query.replace(/"/g,'&quot;')}">
+      <button id="search-go">Rechercher</button>
+    </div>
+    <div class="search-help">Pas besoin de la référence exacte — plusieurs mots-clés partiels suffisent (ex. « ligne assemblage remini »).</div>
+
+    <div class="page-head" style="margin-top:26px">
+      <h2>${showingDefault ? 'Immobilisations (aperçu)' : 'Résultats'}</h2>
+      <span class="page-sub">${results.length.toLocaleString('fr-FR')} trouvée${results.length>1?'s':''}${results.length>150?' — 150 affichées':''}</span>
+    </div>
+    ${capped.length ? resultsTable(capped, results.length>150 ? 'Affinez la recherche pour réduire la liste.' : '') : `<div class="empty-box"><b>Aucune immobilisation ne correspond</b>Essayez un autre mot-clé, ou parcourez le <a href="#/plan">plan de l'usine</a>.</div>`}
+  `;
+
+  const doSearch = ()=>{ location.hash = '#/recherche/'+encodeURIComponent(document.getElementById('search-input').value.trim()); };
+  document.getElementById('search-go').onclick = doSearch;
+  document.getElementById('search-input').addEventListener('keydown', e=>{ if(e.key==='Enter') doSearch(); });
+}
+
+/* =========================================================
+   PLAN DE L'USINE
+   ========================================================= */
+function zoneCounts(){
+  const counts = {};
+  allAssets().forEach(a=>{ counts[a.zone] = (counts[a.zone]||0)+1; });
+  return counts;
+}
+function sizeClass(count, max){
+  if(count > max*0.35) return 'lg';
+  if(count > max*0.12) return 'md';
+  return '';
+}
+function blueprintHTML(counts, opts){
+  opts = opts || {};
+  const zones = Object.keys(counts).sort((a,b)=>counts[b]-counts[a]);
+  const shown = opts.compact ? zones.slice(0, opts.limit || 11) : zones;
+  if(opts.compact && opts.highlight && !shown.includes(opts.highlight)) shown.push(opts.highlight);
+  const max = Math.max(...zones.map(z=>counts[z]));
+  return `<div class="blueprint"><div class="blueprint-grid${opts.compact?' compact':''}">
+    ${shown.map(z=>{
+      const cls = [ (opts.compact?'':sizeClass(counts[z],max)) ];
+      if(opts.highlight===z) cls.push('highlight','here');
+      const tag = opts.compact ? 'div' : 'a';
+      const href = opts.compact ? '' : `href="#/plan/${encodeURIComponent(z)}"`;
+      return `<${tag} class="bp-zone ${cls.join(' ')}" ${href} title="${z}">
+        <div class="zn">${z}</div>
+        <div class="zc">${counts[z].toLocaleString('fr-FR')}</div>
+      </${tag}>`;
+    }).join('')}
+  </div></div>`;
+}
+
+function renderPlan(){
+  const counts = zoneCounts();
+  app.innerHTML = `
+    <div class="page-head"><div><h1>Plan de l'usine</h1><div class="page-sub">Zones d'après le secteur renseigné sur chaque immobilisation — cliquez une zone pour voir ses sous-zones et son détail</div></div></div>
+    ${blueprintHTML(counts)}
+    <div class="zone-grid">
+      ${Object.keys(counts).sort((a,b)=>counts[b]-counts[a]).map(z=>`<a class="zone-chip" href="#/plan/${encodeURIComponent(z)}">
+        <div class="zn">${z}</div><div class="zc">${counts[z].toLocaleString('fr-FR')} immobilisation${counts[z]>1?'s':''}</div>
+      </a>`).join('')}
+    </div>
+  `;
+}
+
+function renderPlanZone(zoneName, subName){
+  const zoneAssets = allAssets().filter(a=>a.zone===zoneName);
+  const subCounts = {};
+  zoneAssets.forEach(a=>{
+    const l = normalizeLoc(a.localisation);
+    if(l) subCounts[l] = (subCounts[l]||0)+1;
+  });
+  const hasSub = Object.keys(subCounts).length>0;
+
+  if(hasSub && !subName){
+    app.innerHTML = `
+      <div class="breadcrumb"><a href="#/plan">Plan de l'usine</a> / ${zoneName}</div>
+      <div class="page-head"><div><h1>${zoneName}</h1><div class="page-sub">${zoneAssets.length.toLocaleString('fr-FR')} immobilisations — sous-zones identifiées</div></div></div>
+      <div class="zone-grid">
+        ${Object.keys(subCounts).sort((a,b)=>subCounts[b]-subCounts[a]).map(s=>`<a class="zone-chip" href="#/plan/${encodeURIComponent(zoneName)}/${encodeURIComponent(s)}">
+          <div class="zn">${s}</div><div class="zc">${subCounts[s].toLocaleString('fr-FR')} immobilisation${subCounts[s]>1?'s':''}</div>
+        </a>`).join('')}
+        <a class="zone-chip" href="#/plan/${encodeURIComponent(zoneName)}/__autres">
+          <div class="zn">Reste de la zone</div><div class="zc">${(zoneAssets.length-Object.values(subCounts).reduce((a,b)=>a+b,0)).toLocaleString('fr-FR')} sans sous-zone précisée</div>
+        </a>
+      </div>`;
+    return;
+  }
+
+  let list = zoneAssets;
+  let title = zoneName;
+  if(subName && subName!=='__autres'){
+    list = zoneAssets.filter(a=>normalizeLoc(a.localisation)===subName);
+    title = zoneName+' — '+subName;
+  } else if(subName==='__autres'){
+    list = zoneAssets.filter(a=>!normalizeLoc(a.localisation));
+    title = zoneName+' — reste de la zone';
+  }
+  const capped = list.slice(0,150);
+  app.innerHTML = `
+    <div class="breadcrumb"><a href="#/plan">Plan de l'usine</a> / ${hasSub?`<a href="#/plan/${encodeURIComponent(zoneName)}">${zoneName}</a> / ${subName==='__autres'?'Reste de la zone':subName}`:zoneName}</div>
+    <div class="page-head"><div><h1>${title}</h1><div class="page-sub">${list.length.toLocaleString('fr-FR')} immobilisation${list.length>1?'s':''}</div></div></div>
+    ${capped.length ? resultsTable(capped, list.length>150 ? `150 immobilisations affichées sur ${list.length.toLocaleString('fr-FR')} — utilisez la recherche pour affiner.` : '') : `<div class="empty-box"><b>Aucune immobilisation ici</b></div>`}
+  `;
+}
+
+/* =========================================================
+   BILAN
+   ========================================================= */
+function renderBilan(){
+  const list = allAssets();
+  const totalBrut = list.reduce((s,a)=>s+(a.valeurInit||0),0);
+  const totalNet = list.reduce((s,a)=>s+(computedValue(a)||0),0);
+  const byZone = {};
+  list.forEach(a=>{
+    if(!byZone[a.zone]) byZone[a.zone] = {count:0, brut:0, net:0};
+    byZone[a.zone].count++;
+    byZone[a.zone].brut += (a.valeurInit||0);
+    byZone[a.zone].net += (computedValue(a)||0);
+  });
+  const zones = Object.keys(byZone).sort((a,b)=>byZone[b].net-byZone[a].net);
+
+  app.innerHTML = `
+    <div class="page-head"><div><h1>Bilan des immobilisations</h1><div class="page-sub">Somme calculée sur l'ensemble du parc, zone par zone</div></div></div>
+    <div class="stat-row">
+      <div class="stat-box"><div class="sv">${list.length.toLocaleString('fr-FR')}</div><div class="sl">Immobilisations</div></div>
+      <div class="stat-box"><div class="sv">${fmtEUR(totalBrut)}</div><div class="sl">Valeur brute d'origine cumulée</div></div>
+      <div class="stat-box"><div class="sv">${fmtEUR(totalNet)}</div><div class="sl">Valeur nette comptable cumulée</div></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Zone</th><th style="text-align:right">Nb immos</th><th style="text-align:right">Valeur brute</th><th style="text-align:right">Valeur nette</th></tr></thead>
+        <tbody>
+          ${zones.map(z=>`<tr class="clickable" onclick="location.hash='#/plan/${encodeURIComponent(z)}'">
+            <td>${z}</td><td class="right mono">${byZone[z].count.toLocaleString('fr-FR')}</td>
+            <td class="right mono">${fmtEUR(byZone[z].brut)}</td><td class="right mono">${fmtEUR(byZone[z].net)}</td>
+          </tr>`).join('')}
+        </tbody>
+        <tfoot><tr><td>Total</td><td class="right mono">${list.length.toLocaleString('fr-FR')}</td><td class="right mono">${fmtEUR(totalBrut)}</td><td class="right mono">${fmtEUR(totalNet)}</td></tr></tfoot>
+      </table>
+    </div>
+  `;
+}
+
+/* =========================================================
+   AMORTIES
+   ========================================================= */
+function renderAmorties(){
+  const list = allAssets().filter(a=>{
+    const v = computedValue(a);
+    return v!==null && v<=1 && a.valeurInit && a.valeurInit>0;
+  }).sort((a,b)=> (a.date||'').localeCompare(b.date||''));
+  const capped = list.slice(0,200);
+  app.innerHTML = `
+    <div class="page-head"><div><h1>Immobilisations totalement amorties</h1><div class="page-sub">${list.length.toLocaleString('fr-FR')} immobilisation${list.length>1?'s':''} à valeur nette nulle</div></div></div>
+    <div class="info-note">Cette liste se recalcule automatiquement à partir de la valeur nette comptable de chaque immobilisation : dès qu'une immobilisation atteint 0 €, elle apparaît ici toute seule, sans ressaisie — au prochain import du fichier Excel pour les immobilisations réelles, et en continu pour celles ajoutées manuellement.</div>
+    ${capped.length ? resultsTable(capped, list.length>200 ? `200 affichées sur ${list.length.toLocaleString('fr-FR')}.` : '') : `<div class="empty-box"><b>Aucune immobilisation totalement amortie pour l'instant</b></div>`}
+  `;
+}
+
+/* =========================================================
+   REBUT
+   ========================================================= */
+function rebutRow(a){
+  const s = getScrapInfo(a);
+  return `<tr class="clickable" onclick="location.hash='#/asset/${encodeURIComponent(a.numero)}'">
+    <td class="num mono">${a.numero}</td>
+    <td>${a.description}</td>
+    <td class="dim">${a.zone}</td>
+    <td class="right mono">${s && s.year ? s.year : '—'}</td>
+  </tr>`;
+}
+function renderRebut(){
+  const list = allAssets().filter(a=>getScrapInfo(a));
+  const capped = list.slice(0,200);
+  app.innerHTML = `
+    <div class="page-head"><div><h1>Immobilisations mises au rebut</h1><div class="page-sub">${list.length.toLocaleString('fr-FR')} immobilisation${list.length>1?'s':''}</div></div></div>
+    ${capped.length ? `<div class="table-wrap"><table>
+      <thead><tr><th>Numéro</th><th>Description</th><th>Zone</th><th style="text-align:right">Année de rebut</th></tr></thead>
+      <tbody>${capped.map(rebutRow).join('')}</tbody>
+    </table></div>` : `<div class="empty-box"><b>Aucune immobilisation au rebut pour l'instant</b>Marquez-en une depuis sa fiche pour la faire apparaître ici.</div>`}
+  `;
+}
+
+/* =========================================================
+   FICHE
+   ========================================================= */
+function renderFiche(numero){
+  const a = allAssets().find(x=>x.numero===numero);
+  if(!a){ app.innerHTML = `<div class="empty-box"><b>Immobilisation introuvable</b>Le numéro ${numero} ne correspond à aucune fiche.</div>`; return; }
+  const scrap = getScrapInfo(a);
+  const counts = zoneCounts();
+
+  app.innerHTML = `
+    <div class="breadcrumb"><a href="#/">Recherche</a> / <a href="#/plan/${encodeURIComponent(a.zone)}">${a.zone}</a> / ${a.numero}</div>
+    ${scrap ? `<div class="scrap-box">⚠ REBUT — mise au rebut en <span class="y">${scrap.year||'année inconnue'}</span>${scrap.manual?' (marquée manuellement)':''}</div>` : ''}
+    <div class="fiche-top">
+      <div class="qr-box" id="qrbox"></div>
+      <div class="fiche-top-info">
+        <div class="num mono">${a.numero}</div>
+        <h1>${a.description}</h1>
+        <div class="status-line">${a.statut ? a.statut : 'Statut non renseigné'}</div>
+      </div>
+    </div>
+    <dl class="info">
+      <div class="row"><dt>Numéro</dt><dd class="mono">${a.numero}</dd></div>
+      <div class="row"><dt>Description</dt><dd>${a.description}</dd></div>
+      <div class="row"><dt>Responsable</dt><dd>${a.responsable||'—'}</dd></div>
+      <div class="row"><dt>Numéro historique / BCI</dt><dd class="mono">${a.legacy||'—'}</dd></div>
+      <div class="row"><dt>Numéro d'OI</dt><dd class="mono">${a.oi||'—'}</dd></div>
+      <div class="row"><dt>Date de mise en service</dt><dd>${fmtDate(a.date)}</dd></div>
+      <div class="row"><dt>Durée d'amortissement</dt><dd>${a.duree ? a.duree+' ans' : '—'}</dd></div>
+      <div class="row"><dt>Valeur brute d'origine</dt><dd class="mono">${fmtEUR(a.valeurInit)}</dd></div>
+      <div class="row"><dt>Valeur nette comptable</dt><dd class="mono highlight">${fmtEUR(computedValue(a))}</dd></div>
+      <div class="row"><dt>Zone</dt><dd>${a.zone}${a.localisation?' — '+a.localisation:''}</dd></div>
+      <div class="row"><dt>Catégorie</dt><dd>${a.categorie||'—'}</dd></div>
+      <div class="row"><dt>Cost Center</dt><dd class="mono">${a.costCenter||'—'}${a.costCenterName?' — '+a.costCenterName:''}</dd></div>
+    </dl>
+    <div class="mini-plan-title">Emplacement dans l'usine</div>
+    ${blueprintHTML(counts, {compact:true, limit:11, highlight:a.zone})}
+    <div class="fiche-actions">
+      <a class="link-btn" href="#/plan/${encodeURIComponent(a.zone)}">Voir le plan complet de la zone →</a>
+      ${scrap && scrap.manual ? `<button class="link-btn danger" id="unscrap-btn">Retirer le statut rebut</button>` :
+        (!scrap ? `<button class="link-btn danger" id="scrap-btn">Marquer au rebut</button>` : '')}
+    </div>
+  `;
+  try{
+    new QRCode(document.getElementById("qrbox"), {
+      text: location.origin + location.pathname + "#/asset/" + encodeURIComponent(a.numero),
+      width: 88, height: 88, colorDark:"#0F2A19", colorLight:"#ffffff"
+    });
+  }catch(e){
+    document.getElementById("qrbox").innerHTML = '<div style="width:88px;height:88px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#999;text-align:center;">QR indisponible</div>';
+  }
+  const scrapBtn = document.getElementById('scrap-btn');
+  if(scrapBtn) scrapBtn.onclick = ()=>{
+    const y = prompt("Année de mise au rebut ?", new Date().getFullYear());
+    if(y && !isNaN(Number(y))){ setScrapOverride(a.numero, y); toast('Immobilisation marquée au rebut'); route(); }
+  };
+  const unscrapBtn = document.getElementById('unscrap-btn');
+  if(unscrapBtn) unscrapBtn.onclick = ()=>{ clearScrapOverride(a.numero); toast('Statut rebut retiré'); route(); };
+}
+
+/* =========================================================
+   AJOUTER
+   ========================================================= */
+function renderForm(){
+  const counts = zoneCounts();
+  const zones = Object.keys(counts).sort();
+  app.innerHTML = `
+    <div class="breadcrumb"><a href="#/">Recherche</a> / Ajouter une immobilisation</div>
+    <div class="page-head"><h1>Ajouter une immobilisation</h1></div>
+    <div class="form-card">
+      <form id="asset-form">
+        <div class="form-grid">
+          <div class="field"><label>Numéro</label><input required id="f-numero" placeholder="200000001XXX"></div>
+          <div class="field"><label>Description</label><input required id="f-description" placeholder="Ex. Presse hydraulique 150T"></div>
+          <div class="field"><label>Zone</label>
+            <input list="zone-options" id="f-zone" placeholder="Ex. Remini, Argos…">
+            <datalist id="zone-options">${zones.map(z=>`<option value="${z}">`).join('')}</datalist>
+          </div>
+          <div class="field"><label>Catégorie</label><input id="f-categorie" placeholder="Ex. MACHINERY EQUIPMENT"></div>
+          <div class="field"><label>Responsable</label><input id="f-responsable" placeholder="Nom du responsable"></div>
+          <div class="field"><label>Numéro historique / BCI (optionnel)</label><input id="f-bci"></div>
+          <div class="field"><label>Numéro d'OI (optionnel)</label><input id="f-oi"></div>
+          <div class="field"><label>Cost Center</label><input id="f-cc" placeholder="FR14XXXX"></div>
+          <div class="field"><label>Date de mise en service</label><input required type="date" id="f-date"></div>
+          <div class="field"><label>Durée d'amortissement (années)</label><input required type="number" min="1" id="f-duree" value="10"></div>
+          <div class="field full"><label>Valeur brute d'origine (€)</label><input required type="number" min="0" id="f-valeur" placeholder="45000"></div>
+        </div>
+        <div class="submit-row">
+          <button class="btn-primary" type="submit">Enregistrer</button>
+          <span class="form-note">Enregistrée localement dans ce navigateur (démo) — à remplacer par un vrai stockage.</span>
+        </div>
+      </form>
+    </div>
+  `;
+  document.getElementById('asset-form').addEventListener('submit', e=>{
+    e.preventDefault();
+    const numero = document.getElementById('f-numero').value.trim();
+    const a = {
+      numero, description: document.getElementById('f-description').value.trim(),
+      zone: canonZone(document.getElementById('f-zone').value.trim() || 'Non renseigné'),
+      categorie: document.getElementById('f-categorie').value.trim(),
+      date: document.getElementById('f-date').value, duree: Number(document.getElementById('f-duree').value),
+      valeurInit: Number(document.getElementById('f-valeur').value),
+      bookVal: null,
+      legacy: document.getElementById('f-bci').value.trim() || null,
+      oi: document.getElementById('f-oi').value.trim() || null,
+      costCenter: document.getElementById('f-cc').value.trim() || null,
+      costCenterName: null,
+      responsable: document.getElementById('f-responsable').value.trim() || null,
+      statut: null, localisation: null, scrap:null,
+      computed: true
+    };
+    saveCustomAsset(a);
+    toast('Immobilisation '+numero+' enregistrée');
+    setTimeout(()=>{ location.hash = '#/asset/'+encodeURIComponent(numero); }, 400);
+  });
+}
+</script>
+</body>
+</html>
